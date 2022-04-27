@@ -194,6 +194,7 @@ namespace Unity.ProjectAuditor.EditorTests
             {
                 Assert.Positive(descriptor.id);
                 Assert.NotNull(descriptor.areas);
+                Assert.NotNull(descriptor.type);
             }
         }
 
