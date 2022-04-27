@@ -1455,6 +1455,37 @@
           "areas": ["Memory"],
           "problem": "The Object.name property allocates managed memory.",
           "solution": "Try to avoid getting this property in frequently-updated code. Ideally, this property should only be used during initialisation, and the results should be cached if they need to be re-used."
+        },
+        {
+          "id": 101232,
+          "type": "System.Net",
+          "areas": ["Support"],
+          "platforms": ["webgl"],
+          "problem": "System.Net is not supported on this platform. Using Emit might lead to build/runtime errors.",
+          "solution": "Do not use the System.Net API on this platform."
+        },
+        {
+          "id": 101233,
+          "type": "System.Reflection.Emit",
+          "areas": ["Support"],
+          "problem": "System.Reflection.Emit is not supported on this platform. Using Emit might lead to build/runtime errors.",
+          "solution": "Do not use the System.Reflection.Emit API on this platform."
+        },
+        {
+          "id": 101234,
+          "type": "System.Threading",
+          "areas": ["Support"],
+          "platforms": ["webgl"],
+          "problem": "Dot Net threads are not supported on this platform. Using System.Threading might lead to build/runtime errors.",
+          "solution": "Do not use the System.Threading API on this platform."
+        },
+        {
+          "id": 101235,
+          "type": "UnityEngine.Microphone",
+          "areas": ["Support"],
+          "platforms": ["webgl"],
+          "problem": "Microphone is not supported on this platform. Using Microphone might lead to build/runtime errors.",
+          "solution": "Do not use the Microphone API on this platform."
         }
     ]
 }

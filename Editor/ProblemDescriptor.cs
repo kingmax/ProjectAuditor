@@ -39,6 +39,11 @@ namespace Unity.ProjectAuditor.Editor
         LoadTime,
 
         /// <summary>
+        /// Unsupported Feature/API
+        /// </summary>
+        Support,
+
+        /// <summary>
         /// Area not applicable. Information purposes only.
         /// </summary>
         Info
