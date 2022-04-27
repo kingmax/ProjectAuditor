@@ -32,6 +32,8 @@ namespace Unity.ProjectAuditor.Editor.Utils
                     problem = rawDescriptor.problem,
                     solution = rawDescriptor.solution
                 };
+                if (string.IsNullOrEmpty(desc.method))
+                    desc.method = "*";
                 if (string.IsNullOrEmpty(desc.description))
                 {
                     if (string.IsNullOrEmpty(desc.type) || string.IsNullOrEmpty(desc.method))

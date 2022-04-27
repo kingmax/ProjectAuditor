@@ -316,7 +316,6 @@
         {
             "id": 101049,
             "type": "System.Linq",
-            "method": "*",
             "areas": ["Memory"],
             "problem": "Linq allocates large amounts of managed memory.",
             "solution": "We strongly advise against using Linq in any frequently-updated code. Ban its usage from the project entirely, or confine it to initialization code and use it sparingly."
@@ -324,7 +323,6 @@
         {
             "id": 101050,
             "type": "System.Reflection",
-            "method": "*",
             "areas": ["CPU"],
             "problem": "Reflection is slow, and not generally considered performant enough for runtime code.",
             "solution": "Remove code which relies on reflection, or minimise its usage, particularly outside of initialization."
