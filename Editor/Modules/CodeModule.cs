@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -120,7 +121,7 @@ namespace Unity.ProjectAuditor.Editor.Modules
         List<IInstructionAnalyzer> m_Analyzers;
         List<OpCode> m_OpCodes;
         List<ProblemDescriptor> m_ProblemDescriptors;
-        Dictionary<string, ProblemDescriptor> m_RuntimeDescriptors = new Dictionary<string, ProblemDescriptor>();
+        readonly Dictionary<string, ProblemDescriptor> m_RuntimeDescriptors = new Dictionary<string, ProblemDescriptor>();
 
         Thread m_AssemblyAnalysisThread;
 
@@ -182,8 +183,8 @@ namespace Unity.ProjectAuditor.Editor.Modules
             }
 
             // process successfully compiled assemblies
-            var localAssemblyInfos = assemblyInfos.Where(info => !info.packageReadOnly).ToArray();
-            var readOnlyAssemblyInfos = assemblyInfos.Where(info => info.packageReadOnly).ToArray();
+            var localAssemblyInfos = assemblyInfos.Where(info => !info.packageReadOnly).ToList();
+            var readOnlyAssemblyInfos = assemblyInfos.Where(info => info.packageReadOnly).ToList();
             var foundIssues = new List<ProjectIssue>();
             var callCrawler = new CallCrawler();
             var onCallFound = new Action<CallInfo>(pair =>
@@ -216,7 +217,7 @@ namespace Unity.ProjectAuditor.Editor.Modules
             Profiler.BeginSample("CodeModule.Audit.Analysis");
 
             // first phase: analyze assemblies generated from editable scripts
-            AnalyzeAssemblies(localAssemblyInfos, assemblyDirectories, onCallFound, onIssueFoundInternal, null, progress);
+            AnalyzeAssemblies(localAssemblyInfos.AsReadOnly(), assemblyDirectories.AsReadOnly(), onCallFound, onIssueFoundInternal, null, progress);
 
             var enableBackgroundAnalysis = m_Config.AnalyzeInBackground;
 #if !UNITY_2019_3_OR_NEWER
@@ -226,7 +227,7 @@ namespace Unity.ProjectAuditor.Editor.Modules
             if (enableBackgroundAnalysis)
             {
                 m_AssemblyAnalysisThread = new Thread(() =>
-                    AnalyzeAssemblies(readOnlyAssemblyInfos, assemblyDirectories, onCallFound, onIssueFoundInternal, onCompleteInternal));
+                    AnalyzeAssemblies(readOnlyAssemblyInfos.AsReadOnly(), assemblyDirectories.AsReadOnly(), onCallFound, onIssueFoundInternal, onCompleteInternal));
                 m_AssemblyAnalysisThread.Name = "Assembly Analysis";
                 m_AssemblyAnalysisThread.Priority = ThreadPriority.BelowNormal;
                 m_AssemblyAnalysisThread.Start();
@@ -234,13 +235,13 @@ namespace Unity.ProjectAuditor.Editor.Modules
             else
             {
                 Profiler.BeginSample("CodeModule.Audit.AnalysisReadOnly");
-                AnalyzeAssemblies(readOnlyAssemblyInfos, assemblyDirectories, onCallFound, onIssueFoundInternal, onCompleteInternal, progress);
+                AnalyzeAssemblies(readOnlyAssemblyInfos.AsReadOnly(), assemblyDirectories.AsReadOnly(), onCallFound, onIssueFoundInternal, onCompleteInternal, progress);
                 Profiler.EndSample();
             }
             Profiler.EndSample();
         }
 
-        void AnalyzeAssemblies(IEnumerable<AssemblyInfo> assemblyInfos, List<string> assemblyDirectories, Action<CallInfo> onCallFound, Action<ProjectIssue> onIssueFound, Action<IProgress> onComplete, IProgress progress = null)
+        void AnalyzeAssemblies(ReadOnlyCollection<AssemblyInfo> assemblyInfos, ReadOnlyCollection<string> assemblyDirectories, Action<CallInfo> onCallFound, Action<ProjectIssue> onIssueFound, Action<IProgress> onComplete, IProgress progress = null)
         {
             using (var assemblyResolver = new DefaultAssemblyResolver())
             {
