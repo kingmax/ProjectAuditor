@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Unity.ProjectAuditor.Editor.Utils;
@@ -313,7 +314,7 @@ namespace Unity.ProjectAuditor.Editor.Modules
             // add variants first
             if (s_ShaderVariantData.ContainsKey(shader))
             {
-                var variants = s_ShaderVariantData[shader];
+                var variants = s_ShaderVariantData[shader].AsReadOnly();
                 variantCount = variants.Count;
 
                 AddVariants(shader, assetPath, id++, variants, onIssueFound);
@@ -411,7 +412,7 @@ namespace Unity.ProjectAuditor.Editor.Modules
         }
 
 #if VARIANTS_ANALYSIS_SUPPORT
-        void AddVariants(Shader shader, string assetPath, int id, List<ShaderVariantData> shaderVariants, Action<ProjectIssue> onIssueFound)
+        void AddVariants(Shader shader, string assetPath, int id, ReadOnlyCollection<ShaderVariantData> shaderVariants, Action<ProjectIssue> onIssueFound)
         {
             var shaderName = shader.name;
             var descriptor = new ProblemDescriptor
@@ -511,7 +512,7 @@ namespace Unity.ProjectAuditor.Editor.Modules
             AssetDatabase.CreateAsset(svc, path);
         }
 
-        public static ParseLogResult ParsePlayerLog(string logFile, ProjectIssue[] builtVariants, IProgress progress = null)
+        public static ParseLogResult ParsePlayerLog(string logFile, ReadOnlyCollection<ProjectIssue> builtVariants, IProgress progress = null)
         {
             var compiledVariants = new Dictionary<string, List<CompiledVariantData>>();
             var lines = GetCompiledShaderLines(logFile);
@@ -552,9 +553,9 @@ namespace Unity.ProjectAuditor.Editor.Modules
             if (!compiledVariants.Any())
                 return ParseLogResult.NoCompiledVariants;
 
-            builtVariants = builtVariants.OrderBy(v => v.description).ToArray();
+            var sortedBuiltVariants = builtVariants.OrderBy(v => v.description).ToArray();
             var shader = (Shader)null;
-            foreach (var builtVariant in builtVariants)
+            foreach (var builtVariant in sortedBuiltVariants)
             {
                 if (shader == null || !shader.name.Equals(builtVariant.description))
                 {

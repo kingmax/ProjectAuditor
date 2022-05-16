@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 #if UNITY_2018_2_OR_NEWER
+using System.Collections.ObjectModel;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 #endif
@@ -479,7 +480,7 @@ Shader ""Custom/MyEditorShader""
         [Test]
         public void ShadersAnalysis_PlayerLog_DoesNotContainShaderCompilationMessages()
         {
-            var result = ShadersModule.ParsePlayerLog(m_PlayerLogWithNoCompilationResource.relativePath, new ProjectIssue[0]);
+            var result = ShadersModule.ParsePlayerLog(m_PlayerLogWithNoCompilationResource.relativePath, new ReadOnlyCollection<ProjectIssue>(new ProjectIssue[0]));
             Assert.That(result, Is.EqualTo(ParseLogResult.NoCompiledVariants));
         }
 
@@ -493,8 +494,8 @@ Shader ""Custom/MyEditorShader""
             var allVariants = Utility.AnalyzeBuild(IssueCategory.ShaderVariant);
             ShadersModule.ClearBuildData(); // cleanup
 
-            var variants = allVariants.Where(i => i.description.Equals(k_ShaderName) && i.category == IssueCategory.ShaderVariant).ToArray();
-            Assert.Positive(variants.Length);
+            var variants = allVariants.Where(i => i.description.Equals(k_ShaderName) && i.category == IssueCategory.ShaderVariant).ToList().AsReadOnly();
+            Assert.Positive(variants.Count);
 
             var result = ShadersModule.ParsePlayerLog(m_PlayerLogResource.relativePath, variants);
 
@@ -504,7 +505,7 @@ Shader ""Custom/MyEditorShader""
             var numShaderCompilerPlatforms = shaderCompilerPlatforms.Count();
 
             if (!shaderCompilerPlatforms.Contains("OpenGLCore"))
-                Assert.AreEqual(10 * numShaderCompilerPlatforms, variants.Length, "Compiler Platforms: " + string.Join(", ", shaderCompilerPlatforms));
+                Assert.AreEqual(10 * numShaderCompilerPlatforms, variants.Count, "Compiler Platforms: " + string.Join(", ", shaderCompilerPlatforms));
 
             var unusedVariants = variants.Where(i => !i.GetCustomPropertyAsBool(ShaderVariantProperty.Compiled)).ToArray();
             foreach (var plat in shaderCompilerPlatforms)

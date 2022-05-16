@@ -47,7 +47,7 @@ namespace Unity.ProjectAuditor.Editor.UI.Framework
         protected int numIssues { get; }
         public static int toolbarButtonSize { get; }
         public AnalysisView(Unity.ProjectAuditor.Editor.UI.Framework.ViewManager viewManager) {}
-        public virtual void AddIssues(System.Collections.Generic.IEnumerable<Unity.ProjectAuditor.Editor.ProjectIssue> allIssues);
+        public virtual void AddIssues(System.Collections.ObjectModel.ReadOnlyCollection<Unity.ProjectAuditor.Editor.ProjectIssue> allIssues);
         public virtual void Clear();
         public virtual void Create(Unity.ProjectAuditor.Editor.UI.Framework.ViewDescriptor descriptor, Unity.ProjectAuditor.Editor.IssueLayout layout, Unity.ProjectAuditor.Editor.ProjectAuditorConfig config, Unity.ProjectAuditor.Editor.ProjectAuditorModule module, Unity.ProjectAuditor.Editor.UI.Framework.Preferences prefs, Unity.ProjectAuditor.Editor.IProjectIssueFilter filter);
         public virtual void DrawContent();
@@ -56,7 +56,7 @@ namespace Unity.ProjectAuditor.Editor.UI.Framework
         public void DrawInfo();
         public virtual void DrawTextSearch();
         protected virtual void Export(System.Func<Unity.ProjectAuditor.Editor.ProjectIssue, bool> predicate = default(System.Func<Unity.ProjectAuditor.Editor.ProjectIssue, bool>));
-        protected Unity.ProjectAuditor.Editor.ProjectIssue[] GetIssues();
+        protected System.Collections.ObjectModel.ReadOnlyCollection<Unity.ProjectAuditor.Editor.ProjectIssue> GetIssues();
         protected string GetPrefKey(string key);
         public bool IsValid();
         public virtual bool Match(Unity.ProjectAuditor.Editor.ProjectIssue issue);
@@ -247,7 +247,7 @@ namespace Unity.ProjectAuditor.Editor.UI.Framework
         public System.Action onViewExported;
         public int activeViewIndex { get; set; }
         public ViewManager(Unity.ProjectAuditor.Editor.IssueCategory[] categories) {}
-        public void AddIssues(Unity.ProjectAuditor.Editor.ProjectIssue[] issues);
+        public void AddIssues(System.Collections.ObjectModel.ReadOnlyCollection<Unity.ProjectAuditor.Editor.ProjectIssue> issues);
         public void Audit(Unity.ProjectAuditor.Editor.ProjectAuditor projectAuditor);
         public void ChangeView(int index);
         public void ChangeView(Unity.ProjectAuditor.Editor.IssueCategory category);

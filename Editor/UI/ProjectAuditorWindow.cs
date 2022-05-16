@@ -472,7 +472,7 @@ namespace Unity.ProjectAuditor.Editor.UI
                 completed =>
                 {
                     // add batch of issues
-                    m_ViewManager.AddIssues(newIssues.ToArray());
+                    m_ViewManager.AddIssues(newIssues.AsReadOnly());
                     newIssues.Clear();
 
                     if (completed)
@@ -536,11 +536,12 @@ namespace Unity.ProjectAuditor.Editor.UI
             );
 
             // update views
+            var readOnlyList = newIssues.AsReadOnly();
             var views = layouts.Select(l => m_ViewManager.GetView(l.category)).Distinct();
             foreach (var view in views)
             {
                 view.Clear();
-                view.AddIssues(newIssues);
+                view.AddIssues(readOnlyList);
                 view.Refresh();
             }
         }

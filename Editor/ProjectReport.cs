@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -23,10 +24,10 @@ namespace Unity.ProjectAuditor.Editor
             get { return m_Issues.Count; }
         }
 
-        public ProjectIssue[] GetAllIssues()
+        public ReadOnlyCollection<ProjectIssue> GetAllIssues()
         {
             s_Mutex.WaitOne();
-            var result = m_Issues.ToArray();
+            var result = m_Issues.AsReadOnly();
             s_Mutex.ReleaseMutex();
             return result;
         }

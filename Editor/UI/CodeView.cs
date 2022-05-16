@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Unity.ProjectAuditor.Editor.UI.Framework;
 using UnityEditor;
@@ -14,7 +15,7 @@ namespace Unity.ProjectAuditor.Editor.UI
         {
         }
 
-        public override void AddIssues(IEnumerable<ProjectIssue> allIssues)
+        public override void AddIssues(ReadOnlyCollection<ProjectIssue> allIssues)
         {
             base.AddIssues(allIssues);
 

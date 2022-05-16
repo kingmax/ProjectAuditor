@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Unity.ProjectAuditor.Editor.UI.Framework;
@@ -84,8 +85,7 @@ The number of Variants contributes to the build size, however, there might be Va
             if (string.IsNullOrEmpty(logFilename))
                 return;
 
-            var variants = GetIssues().Where(i => i.category == IssueCategory.ShaderVariant).ToArray();
-            var result = ShadersModule.ParsePlayerLog(logFilename, variants, new ProgressBar());
+            var result = ShadersModule.ParsePlayerLog(logFilename, GetIssues(), new ProgressBar());
             switch (result)
             {
                 case ParseLogResult.Success:

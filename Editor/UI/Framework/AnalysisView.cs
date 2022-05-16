@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Unity.ProjectAuditor.Editor.CodeAnalysis;
@@ -131,7 +132,7 @@ namespace Unity.ProjectAuditor.Editor.UI.Framework
 #endif
         }
 
-        public virtual void AddIssues(IEnumerable<ProjectIssue> allIssues)
+        public virtual void AddIssues(ReadOnlyCollection<ProjectIssue> allIssues)
         {
             var issues = allIssues.Where(i => i.category == m_Desc.category).ToArray();
             if (issues.Length == 0)
@@ -141,9 +142,9 @@ namespace Unity.ProjectAuditor.Editor.UI.Framework
             m_Table.AddIssues(issues);
         }
 
-        protected ProjectIssue[] GetIssues()
+        protected ReadOnlyCollection<ProjectIssue> GetIssues()
         {
-            return m_Issues.ToArray();
+            return m_Issues.AsReadOnly();
         }
 
         public virtual void Clear()

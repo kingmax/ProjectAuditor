@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -34,7 +35,7 @@ namespace Unity.ProjectAuditor.Editor.UI.Framework
             return m_Views != null && m_Views.Length > 0;
         }
 
-        public void AddIssues(ProjectIssue[] issues)
+        public void AddIssues(ReadOnlyCollection<ProjectIssue> issues)
         {
             Profiler.BeginSample("ViewManager.AddIssues");
             foreach (var view in m_Views)
@@ -91,9 +92,10 @@ namespace Unity.ProjectAuditor.Editor.UI.Framework
                 module.Audit(issue => { issues.Add(issue); });
             }
 
+            var readOnlyList = issues.AsReadOnly();
             foreach (var view in m_Views)
             {
-                view.AddIssues(issues);
+                view.AddIssues(readOnlyList);
                 view.Refresh();
             }
         }
